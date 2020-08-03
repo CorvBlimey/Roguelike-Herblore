@@ -1,6 +1,6 @@
-package com.github.corvblimey.roguelikeherbology.item;
+package com.github.corvblimey.roguelikeherblore.item;
 
-import com.github.corvblimey.roguelikeherbology.RoguelikeHerbology;
+import com.github.corvblimey.roguelikeherblore.RoguelikeHerblore;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
@@ -21,7 +21,7 @@ public class ForageableFoodItem extends Item {
     }
 
     public StatusEffectInstance getStatusEffect() {
-        return RoguelikeHerbology.getForageableEffect(this.offset);
+        return RoguelikeHerblore.getForageableEffect(this.offset);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.corvblimey.roguelikeherbology.block;
+package com.github.corvblimey.roguelikeherblore.block;
 
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +21,7 @@ import java.util.Random;
 public class ForageableBlock extends PlantBlock {
 
     public static final BooleanProperty FERTILE = BooleanProperty.of("fertile");
-    public static final BooleanProperty HARVESTABLE = BooleanProperty.of("blooming");
+    public static final BooleanProperty HARVESTABLE = BooleanProperty.of("harvestable");
 
     public ForageableBlock(final Settings settings) {
         super(settings);
@@ -39,7 +39,7 @@ public class ForageableBlock extends PlantBlock {
     // "Borrowed" from mc-reap under the wonderful DWTFUW license https://github.com/maxvar/mcf-reap
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient() & state.get(ForageableBlock.HARVESTABLE)) {
-            List<ItemStack> dropList = getDroppedStacks(state, (ServerWorld) world, pos, null, player, player.getStackInHand(hand));
+            List<ItemStack> dropList = getDroppedStacks(state, (ServerWorld) world, pos, world.getBlockEntity(pos), player, player.getStackInHand(hand));
             DefaultedList<ItemStack> drops = DefaultedList.of();
             drops.addAll(dropList);
             for (ItemStack stack : drops) {

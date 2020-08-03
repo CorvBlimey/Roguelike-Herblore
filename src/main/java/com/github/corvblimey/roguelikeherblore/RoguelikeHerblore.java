@@ -1,13 +1,17 @@
-package com.github.corvblimey.roguelikeherbology;
+package com.github.corvblimey.roguelikeherblore;
 
-import com.github.corvblimey.roguelikeherbology.block.ForageableBlock;
-import com.github.corvblimey.roguelikeherbology.item.ForageableFoodItem;
+import com.github.corvblimey.roguelikeherblore.block.ForageableBlock;
+import com.github.corvblimey.roguelikeherblore.item.ForageableFoodItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
@@ -28,35 +32,16 @@ import java.util.stream.IntStream;
 
 import static net.minecraft.util.math.MathHelper.ceil;
 
-public class RoguelikeHerbology implements ModInitializer {
+public class RoguelikeHerblore implements ModInitializer {
 
     public static Logger LOGGER = LogManager.getLogger();
 
-    public static final String MOD_ID = "roguelikeherbology";
-    public static final String MOD_NAME = "Roguelike Herbology";
+    public static final String MOD_ID = "roguelikeherblore";
+    public static final String MOD_NAME = "Roguelike Herblore";
     private static final int maxOffset = 100;
     private static final int defaultHunger = 1;
     private static final float defaultSaturation = 0.1f;
-    private static final ArrayList<StatusEffectInstance> forageableEffects = new ArrayList<StatusEffectInstance>(){{
-        new StatusEffectInstance(StatusEffects.ABSORPTION, 1200, 1);
-        new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 6);
-        new StatusEffectInstance(StatusEffects.INSTANT_HEALTH, 1, 1);
-        new StatusEffectInstance(StatusEffects.REGENERATION, 450, 1);
-        new StatusEffectInstance(StatusEffects.POISON, 300, 1);
-        new StatusEffectInstance(StatusEffects.NIGHT_VISION, 800, 1);
-        new StatusEffectInstance(StatusEffects.RESISTANCE, 800, 1);
-        new StatusEffectInstance(StatusEffects.NAUSEA, 200, 1);
-        new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 600, -2);
-        new StatusEffectInstance(StatusEffects.SPEED, 1200, 1);
-        new StatusEffectInstance(StatusEffects.SPEED, 300, 3);
-        new StatusEffectInstance(StatusEffects.HUNGER, 200, 3);
-        new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1);
-        new StatusEffectInstance(StatusEffects.SLOW_FALLING, 300, 1);
-        new StatusEffectInstance(StatusEffects.JUMP_BOOST, 300, 2);
-        new StatusEffectInstance(StatusEffects.REGENERATION, 200, 2);
-        new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1);
-        new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 2);
-    }};
+    private static final ArrayList<StatusEffectInstance> forageableEffects = new ArrayList<StatusEffectInstance>();
     /* Each edible points to an entry in effectOffsetRedirect, which itself points to
      * a position in forageableEffects. This lets use keep the plant list and effect list
      * sizes independent; we can add more plants without re-scrambling existing ones
@@ -97,17 +82,39 @@ public class RoguelikeHerbology implements ModInitializer {
     public static final Block RYMEFLOWER_BLOCK = generateHarvestBlock("rymeflower");
     public static final Item RYMEFLOWER_HARVEST_ITEM = generateHarvestFood("rymeflower");
 
+    public static final Block[] MIPPED_BLOCKS = {GORGEROOT_BLOCK, BULBFRUIT_BLOCK, QUEENS_SCEPTER_BLOCK, LURANA_BLOCK, MOSS_CURL_BLOCK, HONEYBLOOM_BLOCK, FAIRY_BUSH_BLOCK, SHOREBERRY_BLOCK, BUTTONCUP_BLOCK, PYGMY_CACTUS_BLOCK, OOZECAP_BLOCK, RYMEFLOWER_BLOCK};
+
     @Override
     public void onInitialize() {
         log(Level.INFO, "Initializing");
-        log(Level.INFO, "Number of effects: "+forageableEffects.size());
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.ABSORPTION, 1200, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 6));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.INSTANT_HEALTH, 1, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, 450, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.POISON, 300, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 800, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, 800, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 600, -2));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.SPEED, 1200, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.SPEED, 300, 3));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.HUNGER, 200, 3));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 300, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 300, 2));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 2));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1));
+        forageableEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 2));
 
         ServerWorldEvents.LOAD.register((server, world) -> {
-            LOGGER.info("Loaded world " + world.getRegistryKey().getValue().toString());
-            LOGGER.info("World has seed: " + world.getSeed());
-            setScrambledEffects(world.getSeed());
+            // Check first so we don't do this each time someone goes to the Nether/etc.
+            if(this.effectOffsetRedirect == null) { setScrambledEffects(world.getSeed());}
         });
         registerAll();
+    }
+
+    public static Block[] getMippedBlocks(){
+        return MIPPED_BLOCKS;
     }
 
     private static Item generateHarvestFood(String source_plant, int hunger, float saturation) {
@@ -120,14 +127,14 @@ public class RoguelikeHerbology implements ModInitializer {
     private static Item generateHarvestFood(String source_plant){ return generateHarvestFood(source_plant, defaultHunger, defaultSaturation);}
 
     private static Block generateHarvestBlock(String source_plant) {
-        Block harvest_block = new ForageableBlock(FabricBlockSettings.of(Material.PLANT));
+        Block harvest_block = new ForageableBlock(FabricBlockSettings.of(Material.PLANT).noCollision().nonOpaque());
         BLOCKS.put(harvest_block, new Identifier(MOD_ID, source_plant));
         Item harvest_block_item = new BlockItem(harvest_block, new Item.Settings().group(group));
         ITEMS.put(harvest_block_item, new Identifier(MOD_ID, source_plant));
         return harvest_block;
     }
 
-    public static void registerAll() {
+    private static void registerAll() {
         ITEMS.keySet().forEach(item -> Registry.register(Registry.ITEM, ITEMS.get(item), item));
         BLOCKS.keySet().forEach(block -> Registry.register(Registry.BLOCK, BLOCKS.get(block), block));
     }
@@ -137,6 +144,8 @@ public class RoguelikeHerbology implements ModInitializer {
     }
 
     public static StatusEffectInstance getForageableEffect(int offset){
+        System.out.println("AAAAAAAAAAAAAAAAAAAA"+offset);
+        System.out.println("And also: "+effectOffsetRedirect[offset]);
         return forageableEffects.get(effectOffsetRedirect[offset]);
     }
 
@@ -155,7 +164,6 @@ public class RoguelikeHerbology implements ModInitializer {
             scrambleEffectsPerSeed(effectOffsets, worldSeed+i);
             System.arraycopy(effectOffsets, 0, effectOffsetRedirect, i * forageableEffects.size(), forageableEffects.size());
         }
-        LOGGER.info("Resulting effect array: "+effectOffsetRedirect);
     }
 
     private static void scrambleEffectsPerSeed(int[] array, long seed)
