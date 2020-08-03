@@ -1,17 +1,16 @@
 package com.github.corvblimey.roguelikeherblore;
 
 import com.github.corvblimey.roguelikeherblore.block.ForageableBlock;
+import com.github.corvblimey.roguelikeherblore.item.FloralBaton;
 import com.github.corvblimey.roguelikeherblore.item.ForageableFoodItem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.github.corvblimey.roguelikeherblore.item.WildInoculant;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
@@ -41,7 +40,7 @@ public class RoguelikeHerblore implements ModInitializer {
     private static final int maxOffset = 100;
     private static final int defaultHunger = 1;
     private static final float defaultSaturation = 0.1f;
-    private static final ArrayList<StatusEffectInstance> forageableEffects = new ArrayList<StatusEffectInstance>();
+    private static final ArrayList<StatusEffectGen> forageableEffects = new ArrayList<StatusEffectGen>();
     /* Each edible points to an entry in effectOffsetRedirect, which itself points to
      * a position in forageableEffects. This lets use keep the plant list and effect list
      * sizes independent; we can add more plants without re-scrambling existing ones
@@ -55,6 +54,9 @@ public class RoguelikeHerblore implements ModInitializer {
     // We increment this each time we add a new food item. It's how randomization works.
     // This means that the order of item creation matters!!! Use the python script!
     private static int offset = 0;
+
+    public static final Item WILD_INOCULANT = new WildInoculant(new Item.Settings().group(group));
+    public static final Item FLORAL_BATON = new FloralBaton(new Item.Settings().group(group));
 
     // Ignore the "never used" warning, we do this for other folks' sake.
     public static final Block GORGEROOT_BLOCK = generateHarvestBlock("gorgeroot");
@@ -84,33 +86,57 @@ public class RoguelikeHerblore implements ModInitializer {
 
     public static final Block[] MIPPED_BLOCKS = {GORGEROOT_BLOCK, BULBFRUIT_BLOCK, QUEENS_SCEPTER_BLOCK, LURANA_BLOCK, MOSS_CURL_BLOCK, HONEYBLOOM_BLOCK, FAIRY_BUSH_BLOCK, SHOREBERRY_BLOCK, BUTTONCUP_BLOCK, PYGMY_CACTUS_BLOCK, OOZECAP_BLOCK, RYMEFLOWER_BLOCK};
 
+    public static class StatusEffectGen{
+        private final StatusEffect effect;
+        private final int tickDuration;
+        private final int intensity;
+        public StatusEffectGen(StatusEffect effect, int tickDuration, int intensity){
+            this.effect = effect;
+            this.tickDuration = tickDuration;
+            this.intensity = intensity;
+        }
+
+        public StatusEffectInstance genEffect(){
+            return new StatusEffectInstance(this.effect, this.tickDuration, this.intensity);
+        }
+    }
+    
     @Override
     public void onInitialize() {
         log(Level.INFO, "Initializing");
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.ABSORPTION, 1200, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 6));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.INSTANT_HEALTH, 1, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, 450, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.POISON, 300, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 800, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, 800, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 600, -2));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.SPEED, 1200, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.SPEED, 300, 3));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.HUNGER, 200, 3));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 300, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 300, 2));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 2));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.WATER_BREATHING, 300, 1));
-        forageableEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 2));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 800, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 300, 2));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 800, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 300, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 200, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 450, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 1200, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 300, 2));
+        // A few effects are made more common by repetition because hacks
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 300, 2));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SLOWNESS, 100, 5));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.INSTANT_HEALTH, 1, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 300, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 300, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 100, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 800, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.NAUSEA, 200, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HEALTH_BOOST, 600, -1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 2));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 300, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 300, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SLOW_FALLING, 300, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 300, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 300, 0));
 
         ServerWorldEvents.LOAD.register((server, world) -> {
-            // Check first so we don't do this each time someone goes to the Nether/etc.
-            if(this.effectOffsetRedirect == null) { setScrambledEffects(world.getSeed());}
+            // It'll also fire off when someone loads the Nether/etc...is  there some way of filtering that?
+            // Because of course we also want it to work properly if someone loads a different overworld instance.
+            setScrambledEffects(world.getSeed());
         });
-        registerAll();
+        Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wild_inoculant"), WILD_INOCULANT);
+        Registry.register(Registry.ITEM, new Identifier(MOD_ID, "floral_baton"), FLORAL_BATON);
+        registerHarvestables();
     }
 
     public static Block[] getMippedBlocks(){
@@ -134,7 +160,7 @@ public class RoguelikeHerblore implements ModInitializer {
         return harvest_block;
     }
 
-    private static void registerAll() {
+    private static void registerHarvestables() {
         ITEMS.keySet().forEach(item -> Registry.register(Registry.ITEM, ITEMS.get(item), item));
         BLOCKS.keySet().forEach(block -> Registry.register(Registry.BLOCK, BLOCKS.get(block), block));
     }
@@ -144,9 +170,7 @@ public class RoguelikeHerblore implements ModInitializer {
     }
 
     public static StatusEffectInstance getForageableEffect(int offset){
-        System.out.println("AAAAAAAAAAAAAAAAAAAA"+offset);
-        System.out.println("And also: "+effectOffsetRedirect[offset]);
-        return forageableEffects.get(effectOffsetRedirect[offset]);
+        return forageableEffects.get(effectOffsetRedirect[offset]).genEffect();
     }
 
     /* To keep the lengths of the plant and effect lists independent, we "tile"
