@@ -13,6 +13,7 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -32,6 +33,12 @@ public class ForageableBlock extends PlantBlock {
     protected void appendProperties(StateManager.Builder<Block, BlockState> stateManager) {
         stateManager.add(FERTILE);
         stateManager.add(BEARING);
+    }
+
+    @Override
+    protected boolean canPlantOnTop(final BlockState floor, final BlockView world, final BlockPos pos) {
+        final Block lv = floor.getBlock();
+        return lv == Blocks.SAND || lv == Blocks.RED_SAND || lv == Blocks.SNOW_BLOCK || lv == Blocks.MYCELIUM || lv == Blocks.GRASS_BLOCK || lv == Blocks.GRAVEL || lv == Blocks.DIRT || lv == Blocks.COARSE_DIRT || lv == Blocks.PODZOL;
     }
 
     @Override

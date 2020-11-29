@@ -1,7 +1,7 @@
 package com.github.corvblimey.roguelikeherblore.item;
 
 import com.github.corvblimey.roguelikeherblore.block.ForageableBlock;
-import com.github.corvblimey.roguelikeherblore.gen.FlowerPatch;
+import com.github.corvblimey.roguelikeherblore.feature.PlantClusterFeature;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ public class WildInoculant extends Item {
         final BlockPos blockPos = context.getBlockPos();
         if (useOnInoculable(context.getStack(), world, blockPos)) {
             if (!world.isClient) {
-                ((ServerWorld) world).spawnParticles(ParticleTypes.CRIT, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 6, 0.5, 0, 0.5, 0);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.CRIT, blockPos.getX(), blockPos.getY()+1, blockPos.getZ(), 6, 0, 0, 0, 0);
             }
             return ActionResult.success(world.isClient);
         }
@@ -35,8 +35,7 @@ public class WildInoculant extends Item {
         if (world.isClient) {return false;}
         final BlockState targetState = world.getBlockState(pos);
         if (targetState.getBlock() instanceof ForageableBlock) {
-            System.out.println("About to test if fertile: "+ targetState.get(ForageableBlock.FERTILE));
-            if (!targetState.get(ForageableBlock.FERTILE)) {
+            if (!targetState.get(ForageableBlock.FERTILE) || !targetState.get(ForageableBlock.BEARING)) {
                 inoculate(world.getBlockState(pos), (ServerWorld)world, pos);
                 stack.decrement(1);
                 return true;
@@ -46,6 +45,6 @@ public class WildInoculant extends Item {
     }
 
     public static void inoculate(BlockState state, final ServerWorld world, final BlockPos pos) {
-        world.setBlockState(pos, state.with(ForageableBlock.FERTILE, true).with(ForageableBlock.BEARING, false));
+        world.setBlockState(pos, state.with(ForageableBlock.FERTILE, true).with(ForageableBlock.BEARING, true));
     }
 }

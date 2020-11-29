@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "roguelikeherblore",
+  "version": "${version}",
+  "name": "Roguelike Herblore",
+  "description": "Randomized (mostly-)helpful plants for explorers, gardeners, and people who like eating food off the ground.",
+  "authors": [
+    "corvblimey"
+  ],
+  "contributors": [],
+  "contact": {},
+  "license": "GPL-3.0",
+  "icon": "assets/com.github.corvblimey.roguelikeherblore/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.corvblimey.roguelikeherblore.RoguelikeHerblore"
+    ],
+    "client": ["com.github.corvblimey.roguelikeherblore.RoguelikeHerbloreClientInit"],
+    "server": []
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.9.0",
+    "fabric": "*"
+  }
+}
