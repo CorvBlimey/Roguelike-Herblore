@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " FF",
+    " SF",
+    "S  "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "F": {
+      "tag": "roguelikeherblore:forageable_plants"
+    }
+  },
+  "result": {
+    "item": "roguelikeherblore:floral_baton",
+    "count": 1
+  }
+}
+

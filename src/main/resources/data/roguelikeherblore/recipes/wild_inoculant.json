@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WWW",
+    "WWW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "tag": "roguelikeherblore:forageable_plants"
+    }
+  },
+  "result": {
+    "item": "roguelikeherblore:wild_inoculant",
+    "count": 1
+  }
+}
+
