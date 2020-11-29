@@ -19,8 +19,11 @@ import json
 
 NAMES = ["gorgeroot","bulbfruit","queens_scepter","lurana", "moss_curl",
          "honeybloom", "fairy_bush", "shoreberry", "buttoncup",
-         "pygmy_cactus", "oozecap", "rymeflower"]
+         "pygmy_cactus", "oozecap", "rimeflower", "grimeberry",
+         "firework_yucca", "breezegrass", "nectar_trumpet", "yellowthroat_crocus"]
 MOD_NAME = "roguelikeherblore"
+# Tag used for items that can be used in the inoculant/other recipes
+CRAFTING_TAG = "forageable_plants"
 
 def main():
     core_path = os.path.join(os.getcwd(), "src/main/resources")
@@ -29,7 +32,8 @@ def main():
     required_dirs = {"blockstates": os.path.join(asset_path, "blockstates"),
                      "block": os.path.join(asset_path, "models/block"),
                      "item": os.path.join(asset_path, "models/item"),
-                     "loot_tables": os.path.join(data_path, "loot_tables/blocks")}
+                     "loot_tables": os.path.join(data_path, "loot_tables/blocks"),
+                     "item_tags": os.path.join(data_path, "tags/items")}
     for dir in required_dirs.values():
         if not os.path.exists(dir):
             os.makedirs(dir)
@@ -65,6 +69,16 @@ def main():
                 json.dump(content, outfile)
         print(f"public static final Block {name.upper()}_BLOCK = generateHarvestBlock(\"{name}\");")
         print(f"public static final Item {name.upper()}_HARVEST_ITEM = generateHarvestFood(\"{name}\");")
+    with open(os.path.join(required_dirs["item_tags"], CRAFTING_TAG+".json"), "w") as item_tags_file:
+        item_tags = {"replace": False,
+                      "values": [f"{MOD_NAME}:{name}" for name in NAMES]}
+        json.dump(item_tags, item_tags_file)
+
+        print("\n\n")
+        for name in NAMES:
+            clean_name = name.replace("_", " ").title() 
+            print(f'"block.{MOD_NAME}.{name}": "{clean_name}",')
+            print(f'"block.{MOD_NAME}.{name}_harvested": "Harvested {clean_name}",')
 
 if __name__ == "__main__":
     main()
