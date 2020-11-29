@@ -1,1 +1,1 @@
-{"parent": "minecraft:item/generated", "textures": {"layer0": "roguelikeherblore:block/breezegrass"}}
+{"parent": "minecraft:item/generated", "textures": {"layer0": "roguelikeherblore:item/fertile_mash"}}
