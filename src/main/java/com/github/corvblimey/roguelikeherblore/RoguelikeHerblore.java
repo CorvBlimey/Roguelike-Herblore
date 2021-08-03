@@ -170,13 +170,13 @@ public class RoguelikeHerblore implements ModInitializer {
         registerHarvestables();
         registerAndConfigureFeatures();
         addAdditionalHarvestBiome(BULBFRUIT_BLOCK, Biome.Category.FOREST);
+        addAdditionalHarvestBiome(HONEYBLOOM_BLOCK, Biome.Category.FOREST);
+        addAdditionalHarvestBiome(YELLOWTHROAT_CROCUS_BLOCK, Biome.Category.FOREST);
+        addAdditionalHarvestBiome(NECTAR_TRUMPET_BLOCK, Biome.Category.JUNGLE);
         addAdditionalHarvestBiome(OOZECAP_BLOCK, Biome.Category.JUNGLE);
         addAdditionalHarvestBiome(FIREWORK_YUCCA_BLOCK, Biome.Category.BEACH);
         addAdditionalHarvestBiome(RIMEFLOWER_BLOCK, Biome.Category.TAIGA);
-        addAdditionalHarvestBiome(HONEYBLOOM_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(BREEZEGRASS_BLOCK, Biome.Category.SAVANNA);
-        addAdditionalHarvestBiome(NECTAR_TRUMPET_BLOCK, Biome.Category.JUNGLE);
-        addAdditionalHarvestBiome(YELLOWTHROAT_CROCUS_BLOCK, Biome.Category.FOREST);
     }
 
     public static Block[] getMippedBlocks(){

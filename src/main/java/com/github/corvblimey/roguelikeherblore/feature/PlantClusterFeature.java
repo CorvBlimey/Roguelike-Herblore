@@ -27,7 +27,7 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
     }
 
     private static final int density = 14; // Rough percent chance of a block in a spawn area containing a plant
-    // The percent chance of a spawned plant being harvestable. Note that nless this is set below 25, the first plant spawned is always harvvestable.
+    // The percent chance of a spawned plant being harvestable. Note that nless this is set below 25, the first plant spawned is always harvestable.
     private static final int bearingChance = 30;
     // Length of a side of a spawning patch, sort of. We spawn in patchSize/2 blocks to either direction of a center, so the functional size is odd.
     // Additionally, jungle biomes get a +1 to effective patch size (but no extra plants) to help spawn around all the leaf blocks.

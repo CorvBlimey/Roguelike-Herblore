@@ -35,7 +35,7 @@ public class WildInoculant extends Item {
         if (world.isClient) {return false;}
         final BlockState targetState = world.getBlockState(pos);
         if (targetState.getBlock() instanceof ForageableBlock) {
-            if (!targetState.get(ForageableBlock.FERTILE) || !targetState.get(ForageableBlock.BEARING)) {
+            if (!targetState.get(ForageableBlock.FERTILE)) {
                 inoculate(world.getBlockState(pos), (ServerWorld)world, pos);
                 stack.decrement(1);
                 return true;
@@ -45,6 +45,6 @@ public class WildInoculant extends Item {
     }
 
     public static void inoculate(BlockState state, final ServerWorld world, final BlockPos pos) {
-        world.setBlockState(pos, state.with(ForageableBlock.FERTILE, true).with(ForageableBlock.BEARING, true));
+        world.setBlockState(pos, state.with(ForageableBlock.FERTILE, true).with(ForageableBlock.BEARING, false));
     }
 }
