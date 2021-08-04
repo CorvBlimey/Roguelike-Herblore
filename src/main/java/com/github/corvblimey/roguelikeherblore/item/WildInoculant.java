@@ -24,7 +24,7 @@ public class WildInoculant extends Item {
         final BlockPos blockPos = context.getBlockPos();
         if (useOnInoculable(context.getStack(), world, blockPos)) {
             if (!world.isClient) {
-                ((ServerWorld) world).spawnParticles(ParticleTypes.CRIT, blockPos.getX(), blockPos.getY()+1, blockPos.getZ(), 6, 0, 0, 0, 0);
+                ((ServerWorld) world).spawnParticles(ParticleTypes.CRIT, blockPos.getX()+0.5, blockPos.getY()+1, blockPos.getZ()+0.5, 8, 0.2, 0.2, 0.2, 0.15);
             }
             return ActionResult.success(world.isClient);
         }

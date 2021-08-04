@@ -16,7 +16,6 @@ import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
@@ -43,7 +42,11 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
             return false;
         }
         // We also try not to overwhelm deserts, so we only spawn anything 2/5s of the time
-        if(category == Biome.Category.BEACH && random.nextInt(5)<2){
+        if(category == Biome.Category.DESERT && random.nextInt(5)<2){
+            return true;
+        }
+        // Similarly, plains only get half the spawns
+        if(category == Biome.Category.DESERT && random.nextInt(2)<1){
             return true;
         }
         // Note we add 1 because nextInt is right-exclusive, 0-inclusive and we want the other way round
@@ -51,7 +54,7 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
         final BlockState flowerToGen = getFlowerToGen(random, category);
         // Get area of spawning square, calc # plants, add or remove a few for variety
         final int numToGen = (int)(Math.pow(2 * patchSize + 1, 2) * chanceOfPlant) + getIntInTwoSidedRange(random, patchSize/2);
-        final int numTriesAllowed = numToGen * 5;  // Completely arbitrary but set it high-ish because jungles are a nightmare
+        final int numTriesAllowed = numToGen * 6;  // Completely arbitrary but set it high-ish because jungles are a nightmare
         // Due to jungles being a nightmare, we allow a larger area to be checked for spawning (but not used in calculating numToGen)
         if(category == Biome.Category.JUNGLE){
             patchSize ++;

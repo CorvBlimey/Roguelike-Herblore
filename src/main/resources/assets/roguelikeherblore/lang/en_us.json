@@ -54,14 +54,14 @@
   "item.roguelikeherblore.bulbfruit_harvest_item": "Bulb Fruit",
   "block.roguelikeherblore.tynnia": "Tynnia",
   "block.roguelikeherblore.tynnia_harvested": "Harvested Tynnia",
-  "block.roguelikeherblore.tynnia_harvestitem": "Tynnia Fruit",
+  "item.roguelikeherblore.tynnia_harvest_item": "Tynnia Fruit",
   "block.roguelikeherblore.raspthorn": "Raspthorn",
   "block.roguelikeherblore.raspthorn_harvested": "Harvested Raspthorn",
-  "block.roguelikeherblore.raspthorn_harvestitem": "Raspthorn Bark",
+  "item.roguelikeherblore.raspthorn_harvest_item": "Raspthorn Bark",
   "block.roguelikeherblore.ruffleaf": "Ruffleaf",
   "block.roguelikeherblore.ruffleaf_harvested": "Harvested Ruffleaf",
-  "block.roguelikeherblore.ruffleaf_harvestitem": "Ruffleaves",
+  "item.roguelikeherblore.ruffleaf_harvest_item": "Ruffleaves",
   "block.roguelikeherblore.mupino": "Mupino",
   "block.roguelikeherblore.mupino_harvested": "Harvested Mupino",
-  "block.roguelikeherblore.mupino_harvestitem": "Mupinni"
+  "item.roguelikeherblore.mupino_harvest_item": "Mupinni"
 }

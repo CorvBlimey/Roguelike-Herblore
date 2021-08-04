@@ -26,7 +26,7 @@ public class ForageableBlock extends PlantBlock {
 
     public ForageableBlock(final Settings settings) {
         super(settings);
-        setDefaultState(getStateManager().getDefaultState().with(FERTILE, false).with(BEARING, false));
+        setDefaultState(getStateManager().getDefaultState().with(FERTILE, false).with(BEARING, true));
     }
 
     @Override
