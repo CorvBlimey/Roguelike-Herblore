@@ -75,7 +75,7 @@ public class RoguelikeHerblore implements ModInitializer {
     // Ignore the "never used" warning, we have to make the calls anyways and I think it's clearer to do it here
     // Also, I decided late that some plants spawn in additional biomes, so the "bonus plants" document that. See onInitialize.
 
-    // Unique to beach
+    // beach, river
     public static final Block SHOREBERRY_BLOCK = generateHarvestBlock("shoreberry", Biome.Category.BEACH);
     public static final Item SHOREBERRY_HARVEST_ITEM = generateHarvestFood("shoreberry");
     // Unique to desert
@@ -102,10 +102,10 @@ public class RoguelikeHerblore implements ModInitializer {
     // Unique to jungle
     public static final Block LURANA_BLOCK = generateHarvestBlock("lurana", Biome.Category.JUNGLE);
     public static final Item LURANA_HARVEST_ITEM = generateHarvestFood("lurana");
-    // Unique to plains
+    // plains, mesa
     public static final Block GORGEROOT_BLOCK = generateHarvestBlock("gorgeroot", Biome.Category.PLAINS);
     public static final Item GORGEROOT_HARVEST_ITEM = generateHarvestFood("gorgeroot");
-    // Plains, forest
+    // Unique to plains
     public static final Block HONEYBLOOM_BLOCK = generateHarvestBlock("honeybloom", Biome.Category.PLAINS);
     public static final Item HONEYBLOOM_HARVEST_ITEM = generateHarvestFood("honeybloom");
     // Plains, savannah
@@ -114,8 +114,8 @@ public class RoguelikeHerblore implements ModInitializer {
     // River, forest
     public static final Block BULBFRUIT_BLOCK = generateHarvestBlock("bulbfruit", Biome.Category.RIVER);
     public static final Item BULBFRUIT_HARVEST_ITEM = generateHarvestFood("bulbfruit");
-    // River, extreme hills
-    public static final Block RUFFLEAF_BLOCK = generateHarvestBlock("ruffleaf", Biome.Category.RIVER);
+    // Forest, extreme hills
+    public static final Block RUFFLEAF_BLOCK = generateHarvestBlock("ruffleaf", Biome.Category.EXTREME_HILLS);
     public static final Item RUFFLEAF_HARVEST_ITEM = generateHarvestFood("ruffleaf");
     // Savannah, jungle
     public static final Block BUTTONCUP_BLOCK = generateHarvestBlock("buttoncup", Biome.Category.SAVANNA);
@@ -167,13 +167,13 @@ public class RoguelikeHerblore implements ModInitializer {
         log(Level.INFO, "Initializing");
         forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 800, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 300, 2));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 800, 0));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 300, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 600, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 450, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 1200, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 300, 2));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.SLOWNESS, 100, 5));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.SLOWNESS, 80, 5));
         forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 300, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 100, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 800, 0));
@@ -192,14 +192,13 @@ public class RoguelikeHerblore implements ModInitializer {
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "floral_baton"), FLORAL_BATON);
         registerHarvestables();
         registerAndConfigureFeatures();
-        // Beach: 2 (Unique: 1)
+        // Beach: 2 (Unique plants: 0)
         addAdditionalHarvestBiome(FIREWORK_YUCCA_BLOCK, Biome.Category.BEACH);
         // Desert: 3 (1)
         // Extreme Hills: 3 (2)
-        addAdditionalHarvestBiome(RUFFLEAF_BLOCK, Biome.Category.EXTREME_HILLS);
         // Forest: 4 (0)
+        addAdditionalHarvestBiome(RUFFLEAF_BLOCK, Biome.Category,FOREST);
         addAdditionalHarvestBiome(BULBFRUIT_BLOCK, Biome.Category.FOREST);
-        addAdditionalHarvestBiome(HONEYBLOOM_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(YELLOWTHROAT_CROCUS_BLOCK, Biome.Category.FOREST);
         // Icy: 2 (1)
         addAdditionalHarvestBiome(TYNNIA_BLOCK, Biome.Category.ICY);
@@ -207,15 +206,17 @@ public class RoguelikeHerblore implements ModInitializer {
         addAdditionalHarvestBiome(NECTAR_TRUMPET_BLOCK, Biome.Category.JUNGLE);
         addAdditionalHarvestBiome(OOZECAP_BLOCK, Biome.Category.JUNGLE);
         addAdditionalHarvestBiome(BUTTONCUP_BLOCK, Biome.Category.JUNGLE);
+        // Mesa: 1 (0)
+        addAdditionalHarvestBiome(GORGEROOT_BLOCK, Biome.Category.MESA);
         // Plains: 3 (1)
         // River: 2 (0)
+        addAdditionalHarvestBiome(SHOREBERRY_BLOCK, Biome.Category.RIVER);
         // Savanna: 3 (1)
         addAdditionalHarvestBiome(BREEZEGRASS_BLOCK, Biome.Category.SAVANNA);
         // Swamp: 3 (1)
         addAdditionalHarvestBiome(RASPTHORN_BLOCK, Biome.Category.SWAMP);
         // Taiga: 3 (1)
         // Mushroom: 0
-        // Mesa: 0
         // Nether: 0
         // TheEnd: 0
     }
@@ -256,7 +257,7 @@ public class RoguelikeHerblore implements ModInitializer {
 
     public static void registerAndConfigureFeatures() {
         Registry.register(Registry.FEATURE, PlantClusterFeature.ID, PLANT_CLUSTER);
-        RegistryKey<ConfiguredFeature<?, ?>> plantCluster = RegistryKey.of(Registry.CONFIGURED_FEATURE_WORLDGEN,
+        RegistryKey<ConfiguredFeature<?, ?>> plantCluster = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY,
                 new Identifier(MOD_ID, "plant_cluster"));
         Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, plantCluster.getValue(), PLANT_CLUSTER_CONFIGURED);
         BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.VEGETAL_DECORATION, plantCluster);

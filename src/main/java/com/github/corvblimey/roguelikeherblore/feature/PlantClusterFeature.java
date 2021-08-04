@@ -101,7 +101,7 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
                 || groundState.isOf(Blocks.SNOW_BLOCK)) {
             return true;
         } // Selectively spawnable
-        else if(category == Biome.Category.BEACH || category == Biome.Category.DESERT){
+        else if(category == Biome.Category.BEACH || category == Biome.Category.DESERT || category == Biome.Category.MESA){
             return groundState.isOf(Blocks.SAND) || groundState.isOf(Blocks.RED_SAND);
         }
         return false;
