@@ -72,52 +72,75 @@ public class RoguelikeHerblore implements ModInitializer {
     public static final Item WILD_INOCULANT = new WildInoculant(new Item.Settings().group(group));
     public static final Item FLORAL_BATON = new FloralBaton(new Item.Settings().group(group));
 
-    // Ignore the "never used" warning, we have to make the calls and I think it's clearer to do it here
+    // Ignore the "never used" warning, we have to make the calls anyways and I think it's clearer to do it here
     // Also, I decided late that some plants spawn in additional biomes, so the "bonus plants" document that. See onInitialize.
 
-    // Need: third plant for forest (I'm thinking crocus)
+    // Unique to beach
     public static final Block SHOREBERRY_BLOCK = generateHarvestBlock("shoreberry", Biome.Category.BEACH);
     public static final Item SHOREBERRY_HARVEST_ITEM = generateHarvestFood("shoreberry");
-    // BEACH bonus plants: firework yucca
+    // Unique to desert
     public static final Block PYGMY_CACTUS_BLOCK = generateHarvestBlock("pygmy_cactus", Biome.Category.DESERT);
     public static final Item PYGMY_CACTUS_HARVEST_ITEM = generateHarvestFood("pygmy_cactus");
+    // Desert and beach
     public static final Block FIREWORK_YUCCA_BLOCK = generateHarvestBlock("firework_yucca", Biome.Category.DESERT);
     public static final Item FIREWORK_YUCCA_HARVEST_ITEM = generateHarvestFood("firework_yucca");
+    // Desert and swamp
+    public static final Block RASPTHORN_BLOCK = generateHarvestBlock("raspthorn", Biome.Category.DESERT);
+    public static final Item RASPTHORN_HARVEST_ITEM = generateHarvestFood("raspthorn");
+    // Unique to Extreme Hills
     public static final Block FAIRY_BUSH_BLOCK = generateHarvestBlock("fairy_bush", Biome.Category.EXTREME_HILLS);
     public static final Item FAIRY_BUSH_HARVEST_ITEM = generateHarvestFood("fairy_bush");
+    // Unique to Extreme Hills
     public static final Block QUEENS_SCEPTER_BLOCK = generateHarvestBlock("queens_scepter", Biome.Category.EXTREME_HILLS);
     public static final Item QUEENS_SCEPTER_HARVEST_ITEM = generateHarvestFood("queens_scepter");
+    // Forest, jungle
     public static final Block NECTAR_TRUMPET_BLOCK = generateHarvestBlock("nectar_trumpet", Biome.Category.FOREST);
     public static final Item NECTAR_TRUMPET_HARVEST_ITEM = generateHarvestFood("nectar_trumpet");
-    // FOREST bonus plant: honeybloom, bulbfruit, yellowthroat crocus
+    // Unique to icy
     public static final Block RIMEFLOWER_BLOCK = generateHarvestBlock("rimeflower", Biome.Category.ICY);
     public static final Item RIMEFLOWER_HARVEST_ITEM = generateHarvestFood("rimeflower");
+    // Unique to jungle
     public static final Block LURANA_BLOCK = generateHarvestBlock("lurana", Biome.Category.JUNGLE);
     public static final Item LURANA_HARVEST_ITEM = generateHarvestFood("lurana");
-    // JUNGLE bonus plants: oozecap, nectar trumpet
+    // Unique to plains
     public static final Block GORGEROOT_BLOCK = generateHarvestBlock("gorgeroot", Biome.Category.PLAINS);
     public static final Item GORGEROOT_HARVEST_ITEM = generateHarvestFood("gorgeroot");
+    // Plains, forest
     public static final Block HONEYBLOOM_BLOCK = generateHarvestBlock("honeybloom", Biome.Category.PLAINS);
     public static final Item HONEYBLOOM_HARVEST_ITEM = generateHarvestFood("honeybloom");
+    // Plains, savannah
     public static final Block BREEZEGRASS_BLOCK = generateHarvestBlock("breezegrass", Biome.Category.PLAINS);
     public static final Item BREEZEGRASS_HARVEST_ITEM = generateHarvestFood("breezegrass");
+    // River, forest
     public static final Block BULBFRUIT_BLOCK = generateHarvestBlock("bulbfruit", Biome.Category.RIVER);
     public static final Item BULBFRUIT_HARVEST_ITEM = generateHarvestFood("bulbfruit");
+    // River, extreme hills
+    public static final Block RUFFLEAF_BLOCK = generateHarvestBlock("ruffleaf", Biome.Category.RIVER);
+    public static final Item RUFFLEAF_HARVEST_ITEM = generateHarvestFood("ruffleaf");
+    // Savannah, jungle
     public static final Block BUTTONCUP_BLOCK = generateHarvestBlock("buttoncup", Biome.Category.SAVANNA);
     public static final Item BUTTONCUP_HARVEST_ITEM = generateHarvestFood("buttoncup");
-    // SAVANNA bonus plant: breezegrass
+    // Unique to savannah
+    public static final Block MUPINO_BLOCK = generateHarvestBlock("mupino", Biome.Category.SAVANNA);
+    public static final Item MUPINO_HARVEST_ITEM = generateHarvestFood("mupino");
+    // Swamp, jungle
     public static final Block OOZECAP_BLOCK = generateHarvestBlock("oozecap", Biome.Category.SWAMP);
     public static final Item OOZECAP_HARVEST_ITEM = generateHarvestFood("oozecap");
+    // Unique to swamp
     public static final Block GRIMEBERRY_BLOCK = generateHarvestBlock("grimeberry", Biome.Category.SWAMP);
     public static final Item GRIMEBERRY_HARVEST_ITEM = generateHarvestFood("grimeberry");
+    // Unique to taiga
     public static final Block MOSS_CURL_BLOCK = generateHarvestBlock("moss_curl", Biome.Category.TAIGA);
     public static final Item MOSS_CURL_HARVEST_ITEM = generateHarvestFood("moss_curl");
+    // Taiga, forest
     public static final Block YELLOWTHROAT_CROCUS_BLOCK = generateHarvestBlock("yellowthroat_crocus", Biome.Category.TAIGA);
     public static final Item YELLOWTHROAT_CROCUS_HARVEST_ITEM = generateHarvestFood("yellowthroat_crocus");
-    // TAIGA bonus plant: rimeflower
+    // Taiga, tundra
+    public static final Block TYNNIA_BLOCK = generateHarvestBlock("tynnia", Biome.Category.TAIGA);
+    public static final Item TYNNIA_HARVEST_ITEM = generateHarvestFood("tynnia");
 
 
-    public static final Block[] MIPPED_BLOCKS = {GORGEROOT_BLOCK, BULBFRUIT_BLOCK, QUEENS_SCEPTER_BLOCK, LURANA_BLOCK, MOSS_CURL_BLOCK, HONEYBLOOM_BLOCK, FAIRY_BUSH_BLOCK, SHOREBERRY_BLOCK, BUTTONCUP_BLOCK, PYGMY_CACTUS_BLOCK, OOZECAP_BLOCK, RIMEFLOWER_BLOCK, GRIMEBERRY_BLOCK, FIREWORK_YUCCA_BLOCK, NECTAR_TRUMPET_BLOCK, BREEZEGRASS_BLOCK, YELLOWTHROAT_CROCUS_BLOCK};
+    public static final Block[] MIPPED_BLOCKS = {GORGEROOT_BLOCK, BULBFRUIT_BLOCK, QUEENS_SCEPTER_BLOCK, LURANA_BLOCK, MOSS_CURL_BLOCK, HONEYBLOOM_BLOCK, FAIRY_BUSH_BLOCK, SHOREBERRY_BLOCK, BUTTONCUP_BLOCK, PYGMY_CACTUS_BLOCK, OOZECAP_BLOCK, RIMEFLOWER_BLOCK, GRIMEBERRY_BLOCK, FIREWORK_YUCCA_BLOCK, NECTAR_TRUMPET_BLOCK, BREEZEGRASS_BLOCK, YELLOWTHROAT_CROCUS_BLOCK, RASPTHORN_BLOCK, MUPINO_BLOCK, RUFFLEAF_BLOCK, TYNNIA_BLOCK};
 
     public static final Feature<DefaultFeatureConfig> PLANT_CLUSTER = new PlantClusterFeature(DefaultFeatureConfig.CODEC);
     // The ChanceDecoratorConfig is "once per X chunks"
@@ -169,14 +192,32 @@ public class RoguelikeHerblore implements ModInitializer {
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "floral_baton"), FLORAL_BATON);
         registerHarvestables();
         registerAndConfigureFeatures();
+        // Beach: 2 (Unique: 1)
+        addAdditionalHarvestBiome(FIREWORK_YUCCA_BLOCK, Biome.Category.BEACH);
+        // Desert: 3 (1)
+        // Extreme Hills: 3 (2)
+        addAdditionalHarvestBiome(RUFFLEAF_BLOCK, Biome.Category.EXTREME_HILLS);
+        // Forest: 4 (0)
         addAdditionalHarvestBiome(BULBFRUIT_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(HONEYBLOOM_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(YELLOWTHROAT_CROCUS_BLOCK, Biome.Category.FOREST);
+        // Icy: 2 (1)
+        addAdditionalHarvestBiome(TYNNIA_BLOCK, Biome.Category.ICY);
+        // Jungle: 4 (1)
         addAdditionalHarvestBiome(NECTAR_TRUMPET_BLOCK, Biome.Category.JUNGLE);
         addAdditionalHarvestBiome(OOZECAP_BLOCK, Biome.Category.JUNGLE);
-        addAdditionalHarvestBiome(FIREWORK_YUCCA_BLOCK, Biome.Category.BEACH);
-        addAdditionalHarvestBiome(RIMEFLOWER_BLOCK, Biome.Category.TAIGA);
+        addAdditionalHarvestBiome(BUTTONCUP_BLOCK, Biome.Category.JUNGLE);
+        // Plains: 3 (1)
+        // River: 2 (0)
+        // Savanna: 3 (1)
         addAdditionalHarvestBiome(BREEZEGRASS_BLOCK, Biome.Category.SAVANNA);
+        // Swamp: 3 (1)
+        addAdditionalHarvestBiome(RASPTHORN_BLOCK, Biome.Category.SWAMP);
+        // Taiga: 3 (1)
+        // Mushroom: 0
+        // Mesa: 0
+        // Nether: 0
+        // TheEnd: 0
     }
 
     public static Block[] getMippedBlocks(){

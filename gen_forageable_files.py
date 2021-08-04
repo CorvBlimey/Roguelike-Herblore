@@ -20,7 +20,8 @@ import json
 NAMES = ["gorgeroot","bulbfruit","queens_scepter","lurana", "moss_curl",
          "honeybloom", "fairy_bush", "shoreberry", "buttoncup",
          "pygmy_cactus", "oozecap", "rimeflower", "grimeberry",
-         "firework_yucca", "breezegrass", "nectar_trumpet", "yellowthroat_crocus"]
+         "firework_yucca", "breezegrass", "nectar_trumpet", "yellowthroat_crocus",
+         "tynnia", "raspthorn", "ruffleaf", "mupino"]
 MOD_NAME = "roguelikeherblore"
 # Tag used for items that can be used in the inoculant/other recipes
 CRAFTING_TAG = "forageable_plants"

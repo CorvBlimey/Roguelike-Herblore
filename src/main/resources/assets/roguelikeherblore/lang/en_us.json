@@ -1,4 +1,6 @@
 {
+  "item.roguelikeherblore.floral_baton": "Floral Baton",
+  "item.roguelikeherblore.wild_inoculant": "Wild Inoculant",
   "block.roguelikeherblore.gorgeroot": "Gorgeroot",
   "block.roguelikeherblore.gorgeroot_harvested": "Harvested Gorgeroot",
   "block.roguelikeherblore.bulbfruit": "Bulbfruit",
@@ -33,7 +35,6 @@
   "block.roguelikeherblore.nectar_trumpet_harvested": "Harvested Nectar Trumpet",
   "block.roguelikeherblore.yellowthroat_crocus": "Yellowthroat Crocus",
   "block.roguelikeherblore.yellowthroat_crocus_harvested": "Harvested Yellowthroat Crocus",
-
   "item.roguelikeherblore.yellowthroat_crocus_harvest_item": "Yellowthroat Crocus Flower",
   "item.roguelikeherblore.nectar_trumpet_harvest_item": "Trumpet Nectar",
   "item.roguelikeherblore.breezegrass_harvest_item": "Breezegrass Clippings",
@@ -50,5 +51,17 @@
   "item.roguelikeherblore.lurana_harvest_item": "Lurana Flower",
   "item.roguelikeherblore.queens_scepter_harvest_item": "Queen's Apple",
   "item.roguelikeherblore.gorgeroot_harvest_item": "Gorgeroot Tuber",
-  "item.roguelikeherblore.bulbfruit_harvest_item": "Bulb Fruit"
+  "item.roguelikeherblore.bulbfruit_harvest_item": "Bulb Fruit",
+  "block.roguelikeherblore.tynnia": "Tynnia",
+  "block.roguelikeherblore.tynnia_harvested": "Harvested Tynnia",
+  "block.roguelikeherblore.tynnia_harvestitem": "Tynnia Fruit",
+  "block.roguelikeherblore.raspthorn": "Raspthorn",
+  "block.roguelikeherblore.raspthorn_harvested": "Harvested Raspthorn",
+  "block.roguelikeherblore.raspthorn_harvestitem": "Raspthorn Bark",
+  "block.roguelikeherblore.ruffleaf": "Ruffleaf",
+  "block.roguelikeherblore.ruffleaf_harvested": "Harvested Ruffleaf",
+  "block.roguelikeherblore.ruffleaf_harvestitem": "Ruffleaves",
+  "block.roguelikeherblore.mupino": "Mupino",
+  "block.roguelikeherblore.mupino_harvested": "Harvested Mupino",
+  "block.roguelikeherblore.mupino_harvestitem": "Mupinni"
 }
