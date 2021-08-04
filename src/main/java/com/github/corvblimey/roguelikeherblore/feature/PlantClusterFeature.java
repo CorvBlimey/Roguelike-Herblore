@@ -14,6 +14,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.util.FeatureContext;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -34,7 +35,10 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
     private static final int maxPatchSize = 6;  // This would be a (6/2+1)*2=7-block square, 49 total blocks, 6 plants at density=14 (number's somewhat randomized)
     private static final double chanceOfPlant = density*0.01;
 
-    public boolean generate(StructureWorldAccess world, ChunkGenerator chunkGenerator, Random random, BlockPos pos, DefaultFeatureConfig featureConfig) {
+    public boolean generate(FeatureContext<DefaultFeatureConfig> context) {
+        StructureWorldAccess world = context.getWorld();
+        BlockPos pos = context.getOrigin();
+        Random random = context.getRandom();
         BlockPos centerPos = pos.add(8, 0, 8);
         Biome.Category category = world.getBiome(centerPos).getCategory();
         // We don't spawn if we don't have any plants registered for the biome
@@ -88,17 +92,17 @@ public class PlantClusterFeature extends Feature<DefaultFeatureConfig> {
     }
 
     public static boolean groundSupportsPlantPlacement(StructureWorldAccess world, BlockPos pos, Biome.Category category) {
-        Block groundMaterial = world.getBlockState(pos.down()).getBlock();
+        BlockState groundState = world.getBlockState(pos.down());
         // Universally spawnable
-        if(groundMaterial.is(Blocks.GRASS_BLOCK)
-                || groundMaterial.is(Blocks.DIRT)
-                || groundMaterial.is(Blocks.COARSE_DIRT)
-                || groundMaterial.is(Blocks.PODZOL)
-                || groundMaterial.is(Blocks.SNOW_BLOCK)) {
+        if(groundState.isOf(Blocks.GRASS_BLOCK)
+                || groundState.isOf(Blocks.DIRT)
+                || groundState.isOf(Blocks.COARSE_DIRT)
+                || groundState.isOf(Blocks.PODZOL)
+                || groundState.isOf(Blocks.SNOW_BLOCK)) {
             return true;
         } // Selectively spawnable
         else if(category == Biome.Category.BEACH || category == Biome.Category.DESERT){
-            return groundMaterial.is(Blocks.SAND) || groundMaterial.is(Blocks.RED_SAND);
+            return groundState.isOf(Blocks.SAND) || groundState.isOf(Blocks.RED_SAND);
         }
         return false;
     }
