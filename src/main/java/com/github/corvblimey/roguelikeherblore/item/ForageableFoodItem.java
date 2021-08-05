@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 public class ForageableFoodItem extends Item {
 
-    private int offset;  // Used to calculate the potion effect
+    protected int offset;  // Used to calculate the potion effect
 
     public ForageableFoodItem(final Settings settings) {
         super(settings);

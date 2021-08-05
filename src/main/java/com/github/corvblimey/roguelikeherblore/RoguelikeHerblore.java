@@ -53,6 +53,7 @@ public class RoguelikeHerblore implements ModInitializer {
     private static final int defaultHunger = 1;
     private static final float defaultSaturation = 0.1f;
     private static final ArrayList<StatusEffectGen> forageableEffects = new ArrayList<StatusEffectGen>();
+    private static final ArrayList<StatusEffectGen> treatedForageableEffects = new ArrayList<StatusEffectGen>();
     /* Each edible points to an entry in effectOffsetRedirect, which itself points to
      * a position in forageableEffects. This lets use keep the plant list and effect list
      * sizes independent; we can add more plants without re-scrambling existing ones
@@ -165,28 +166,53 @@ public class RoguelikeHerblore implements ModInitializer {
     @Override
     public void onInitialize() {
         log(Level.INFO, "Initializing");
+        // Remember to try to keep parity with the number of plants!
+        // The mod won't break, but if there's more plants than effects, the "extra" plant effects are randomized from this list.
+        // Since I'm not currently writing a world save file, if the effect list is then lengthened, the plant's effect
+        // will change in the world (because it no longer had to loop around, so it has a different offset now).
         forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 800, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 300, 2));
         forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 200, 1));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 450, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 400, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 1200, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 300, 2));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SLOWNESS, 80, 5));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 300, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 100, 1));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 800, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.NAUSEA, 200, 1));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 2));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 300, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SLOW_FALLING, 300, 0));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 300, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 800, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 200, 3));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 1200, 0));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.BLINDNESS, 200, 2));
+
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 1200, 2));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.DOLPHINS_GRACE, 600, 0));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 3));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 600, 0));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 600, 2));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 200, 2));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 1800, 0));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 1800, 0));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.WITHER, 160, 1));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 600, 2));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.INSTANT_HEALTH, 1, 1));
+        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.LEVITATION, 200, 1));
 
         ServerWorldEvents.LOAD.register((server, world) -> {
             // It'll also fire off when someone loads the Nether/etc...is  there some way of filtering that?
             // Because of course we also want it to work properly if someone loads a different overworld instance.
-            setScrambledEffects(world.getSeed());
+            // No idea how those are implemented/if they get a "new" seed (I imagine it'd be derived from the old, but still)
+            setScrambledEffects(forageableEffects, world.getSeed(), 0);
+            // Offset is used to avoid random seed overlap, so we just need it high enough we'd never reasonably have an effect list
+            // of that length
+            setScrambledEffects(treatedForageableEffects, world.getSeed(), 500);
         });
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wild_inoculant"), WILD_INOCULANT);
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "floral_baton"), FLORAL_BATON);
@@ -197,7 +223,7 @@ public class RoguelikeHerblore implements ModInitializer {
         // Desert: 3 (1)
         // Extreme Hills: 3 (2)
         // Forest: 4 (0)
-        addAdditionalHarvestBiome(RUFFLEAF_BLOCK, Biome.Category,FOREST);
+        addAdditionalHarvestBiome(RUFFLEAF_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(BULBFRUIT_BLOCK, Biome.Category.FOREST);
         addAdditionalHarvestBiome(YELLOWTHROAT_CROCUS_BLOCK, Biome.Category.FOREST);
         // Icy: 2 (1)
@@ -271,6 +297,10 @@ public class RoguelikeHerblore implements ModInitializer {
         return forageableEffects.get(effectOffsetRedirect[offset]).genEffect();
     }
 
+    public static StatusEffectInstance getTreatedForageableEffect(int offset){
+        return treatedForageableEffects.get(effectOffsetRedirect[offset]).genEffect();
+    }
+
     /* To keep the lengths of the plant and effect lists independent, we "tile"
      * the randomization of the list to meet (or exceed; I'm lazy) the offset.
      * The end result is that if you have 5 effects and a max offset of 12, you get
@@ -278,13 +308,13 @@ public class RoguelikeHerblore implements ModInitializer {
      * times. This should help prevent people from getting worlds with nothing but
      * Nausea plants.
      */
-    private void setScrambledEffects(long worldSeed){
-        int repetitions = ceil((float) maxOffset /forageableEffects.size());
-        effectOffsetRedirect = new int[forageableEffects.size()*repetitions];
+    private void setScrambledEffects(ArrayList<StatusEffectGen> effectList, long worldSeed, int seedOffset){
+        int repetitions = ceil((float) maxOffset /effectList.size());
+        effectOffsetRedirect = new int[effectList.size()*repetitions];
         for(int i = 0; i < repetitions; i++){
-            final int[] effectOffsets = IntStream.rangeClosed(0, forageableEffects.size()-1).toArray();
-            scrambleEffectsPerSeed(effectOffsets, worldSeed+i);
-            System.arraycopy(effectOffsets, 0, effectOffsetRedirect, i * forageableEffects.size(), forageableEffects.size());
+            final int[] effectOffsets = IntStream.rangeClosed(0, effectList.size()-1).toArray();
+            scrambleEffectsPerSeed(effectOffsets, worldSeed+i+seedOffset);
+            System.arraycopy(effectOffsets, 0, effectOffsetRedirect, i * effectList.size(), effectList.size());
         }
     }
 
