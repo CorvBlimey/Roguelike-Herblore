@@ -4,6 +4,7 @@ import com.github.corvblimey.roguelikeherblore.block.ForageableBlock;
 import com.github.corvblimey.roguelikeherblore.feature.PlantClusterFeature;
 import com.github.corvblimey.roguelikeherblore.item.FloralBaton;
 import com.github.corvblimey.roguelikeherblore.item.ForageableFoodItem;
+import com.github.corvblimey.roguelikeherblore.item.PotentForageableFoodItem;
 import com.github.corvblimey.roguelikeherblore.item.WildInoculant;
 import net.fabricmc.api.ModInitializer;
 
@@ -53,13 +54,14 @@ public class RoguelikeHerblore implements ModInitializer {
     private static final int defaultHunger = 1;
     private static final float defaultSaturation = 0.1f;
     private static final ArrayList<StatusEffectGen> forageableEffects = new ArrayList<StatusEffectGen>();
-    private static final ArrayList<StatusEffectGen> treatedForageableEffects = new ArrayList<StatusEffectGen>();
+    private static final ArrayList<StatusEffectGen> potentForageableEffects = new ArrayList<StatusEffectGen>();
     /* Each edible points to an entry in effectOffsetRedirect, which itself points to
      * a position in forageableEffects. This lets use keep the plant list and effect list
      * sizes independent; we can add more plants without re-scrambling existing ones
      * (however, we CANNOT do the same for potion effects! That scrambles things!)
      */
     private static int[] effectOffsetRedirect;
+    private static int[] potentEffectOffsetRedirect;
 
     private static final Map<Item, Identifier> ITEMS = new LinkedHashMap<>();
     private static final Map<Block, Identifier> BLOCKS = new LinkedHashMap<>();
@@ -69,6 +71,7 @@ public class RoguelikeHerblore implements ModInitializer {
     // We increment this each time we add a new food item. It's how randomization works.
     // This means that the order of item creation matters!!! Use the python script!
     private static int offset = 0;
+    private static int potentOffset = 0;
 
     public static final Item WILD_INOCULANT = new WildInoculant(new Item.Settings().group(group));
     public static final Item FLORAL_BATON = new FloralBaton(new Item.Settings().group(group));
@@ -76,69 +79,72 @@ public class RoguelikeHerblore implements ModInitializer {
     // Ignore the "never used" warning, we have to make the calls anyways and I think it's clearer to do it here
     // Also, I decided late that some plants spawn in additional biomes, so the "bonus plants" document that. See onInitialize.
 
+    // Call order matters.
+
     // beach, river
     public static final Block SHOREBERRY_BLOCK = generateHarvestBlock("shoreberry", Biome.Category.BEACH);
-    public static final Item SHOREBERRY_HARVEST_ITEM = generateHarvestFood("shoreberry");
+    public static final Harvestables SHOREBERRY_HARVEST_ITEMS = generateHarvestFood("shoreberry");
     // Unique to desert
     public static final Block PYGMY_CACTUS_BLOCK = generateHarvestBlock("pygmy_cactus", Biome.Category.DESERT);
-    public static final Item PYGMY_CACTUS_HARVEST_ITEM = generateHarvestFood("pygmy_cactus");
+    public static final Harvestables PYGMY_CACTUS_HARVEST_ITEMS = generateHarvestFood("pygmy_cactus");
     // Desert and beach
     public static final Block FIREWORK_YUCCA_BLOCK = generateHarvestBlock("firework_yucca", Biome.Category.DESERT);
-    public static final Item FIREWORK_YUCCA_HARVEST_ITEM = generateHarvestFood("firework_yucca");
+    public static final Harvestables FIREWORK_YUCCA_HARVEST_ITEMS = generateHarvestFood("firework_yucca");
     // Desert and swamp
     public static final Block RASPTHORN_BLOCK = generateHarvestBlock("raspthorn", Biome.Category.DESERT);
-    public static final Item RASPTHORN_HARVEST_ITEM = generateHarvestFood("raspthorn");
+    public static final Harvestables RASPTHORN_HARVEST_ITEMS = generateHarvestFood("raspthorn");
     // Unique to Extreme Hills
     public static final Block FAIRY_BUSH_BLOCK = generateHarvestBlock("fairy_bush", Biome.Category.EXTREME_HILLS);
-    public static final Item FAIRY_BUSH_HARVEST_ITEM = generateHarvestFood("fairy_bush");
+    public static final Harvestables FAIRY_BUSH_HARVEST_ITEMS = generateHarvestFood("fairy_bush");
     // Unique to Extreme Hills
     public static final Block QUEENS_SCEPTER_BLOCK = generateHarvestBlock("queens_scepter", Biome.Category.EXTREME_HILLS);
-    public static final Item QUEENS_SCEPTER_HARVEST_ITEM = generateHarvestFood("queens_scepter");
+    public static final Harvestables QUEENS_SCEPTER_HARVEST_ITEMS = generateHarvestFood("queens_scepter");
     // Forest, jungle
     public static final Block NECTAR_TRUMPET_BLOCK = generateHarvestBlock("nectar_trumpet", Biome.Category.FOREST);
-    public static final Item NECTAR_TRUMPET_HARVEST_ITEM = generateHarvestFood("nectar_trumpet");
+    public static final Harvestables NECTAR_TRUMPET_HARVEST_ITEMS = generateHarvestFood("nectar_trumpet");
     // Unique to icy
     public static final Block RIMEFLOWER_BLOCK = generateHarvestBlock("rimeflower", Biome.Category.ICY);
-    public static final Item RIMEFLOWER_HARVEST_ITEM = generateHarvestFood("rimeflower");
+    public static final Harvestables RIMEFLOWER_HARVEST_ITEMS = generateHarvestFood("rimeflower");
     // Unique to jungle
     public static final Block LURANA_BLOCK = generateHarvestBlock("lurana", Biome.Category.JUNGLE);
-    public static final Item LURANA_HARVEST_ITEM = generateHarvestFood("lurana");
+    public static final Harvestables LURANA_HARVEST_ITEMS = generateHarvestFood("lurana");
     // plains, mesa
     public static final Block GORGEROOT_BLOCK = generateHarvestBlock("gorgeroot", Biome.Category.PLAINS);
-    public static final Item GORGEROOT_HARVEST_ITEM = generateHarvestFood("gorgeroot");
+    public static final Harvestables GORGEROOT_HARVEST_ITEMS = generateHarvestFood("gorgeroot");
     // Unique to plains
     public static final Block HONEYBLOOM_BLOCK = generateHarvestBlock("honeybloom", Biome.Category.PLAINS);
-    public static final Item HONEYBLOOM_HARVEST_ITEM = generateHarvestFood("honeybloom");
+    public static final Harvestables HONEYBLOOM_HARVEST_ITEMS = generateHarvestFood("honeybloom");
     // Plains, savannah
     public static final Block BREEZEGRASS_BLOCK = generateHarvestBlock("breezegrass", Biome.Category.PLAINS);
-    public static final Item BREEZEGRASS_HARVEST_ITEM = generateHarvestFood("breezegrass");
+    public static final Harvestables BREEZEGRASS_HARVEST_ITEMS = generateHarvestFood("breezegrass");
     // River, forest
     public static final Block BULBFRUIT_BLOCK = generateHarvestBlock("bulbfruit", Biome.Category.RIVER);
-    public static final Item BULBFRUIT_HARVEST_ITEM = generateHarvestFood("bulbfruit");
+    public static final Harvestables BULBFRUIT_HARVEST_ITEMS = generateHarvestFood("bulbfruit");
     // Forest, extreme hills
     public static final Block RUFFLEAF_BLOCK = generateHarvestBlock("ruffleaf", Biome.Category.EXTREME_HILLS);
-    public static final Item RUFFLEAF_HARVEST_ITEM = generateHarvestFood("ruffleaf");
+    public static final Harvestables RUFFLEAF_HARVEST_ITEMS = generateHarvestFood("ruffleaf");
     // Savannah, jungle
     public static final Block BUTTONCUP_BLOCK = generateHarvestBlock("buttoncup", Biome.Category.SAVANNA);
-    public static final Item BUTTONCUP_HARVEST_ITEM = generateHarvestFood("buttoncup");
+    public static final Harvestables BUTTONCUP_HARVEST_ITEMS = generateHarvestFood("buttoncup");
     // Unique to savannah
     public static final Block MUPINO_BLOCK = generateHarvestBlock("mupino", Biome.Category.SAVANNA);
-    public static final Item MUPINO_HARVEST_ITEM = generateHarvestFood("mupino");
+    public static final Harvestables MUPINO_HARVEST_ITEMS = generateHarvestFood("mupino");
     // Swamp, jungle
     public static final Block OOZECAP_BLOCK = generateHarvestBlock("oozecap", Biome.Category.SWAMP);
-    public static final Item OOZECAP_HARVEST_ITEM = generateHarvestFood("oozecap");
+    public static final Harvestables OOZECAP_HARVEST_ITEMS = generateHarvestFood("oozecap");
     // Unique to swamp
     public static final Block GRIMEBERRY_BLOCK = generateHarvestBlock("grimeberry", Biome.Category.SWAMP);
-    public static final Item GRIMEBERRY_HARVEST_ITEM = generateHarvestFood("grimeberry");
+    public static final Harvestables GRIMEBERRY_HARVEST_ITEMS = generateHarvestFood("grimeberry");
     // Unique to taiga
     public static final Block MOSS_CURL_BLOCK = generateHarvestBlock("moss_curl", Biome.Category.TAIGA);
-    public static final Item MOSS_CURL_HARVEST_ITEM = generateHarvestFood("moss_curl");
+    public static final Harvestables MOSS_CURL_HARVEST_ITEM = generateHarvestFood("moss_curl");
     // Taiga, forest
     public static final Block YELLOWTHROAT_CROCUS_BLOCK = generateHarvestBlock("yellowthroat_crocus", Biome.Category.TAIGA);
-    public static final Item YELLOWTHROAT_CROCUS_HARVEST_ITEM = generateHarvestFood("yellowthroat_crocus");
+    public static final Harvestables YELLOWTHROAT_CROCUS_HARVEST_ITEMS = generateHarvestFood("yellowthroat_crocus");
     // Taiga, tundra
     public static final Block TYNNIA_BLOCK = generateHarvestBlock("tynnia", Biome.Category.TAIGA);
-    public static final Item TYNNIA_HARVEST_ITEM = generateHarvestFood("tynnia");
+    public static final Harvestables TYNNIA_HARVEST_ITEMS = generateHarvestFood("tynnia");
+
 
 
     public static final Block[] MIPPED_BLOCKS = {GORGEROOT_BLOCK, BULBFRUIT_BLOCK, QUEENS_SCEPTER_BLOCK, LURANA_BLOCK, MOSS_CURL_BLOCK, HONEYBLOOM_BLOCK, FAIRY_BUSH_BLOCK, SHOREBERRY_BLOCK, BUTTONCUP_BLOCK, PYGMY_CACTUS_BLOCK, OOZECAP_BLOCK, RIMEFLOWER_BLOCK, GRIMEBERRY_BLOCK, FIREWORK_YUCCA_BLOCK, NECTAR_TRUMPET_BLOCK, BREEZEGRASS_BLOCK, YELLOWTHROAT_CROCUS_BLOCK, RASPTHORN_BLOCK, MUPINO_BLOCK, RUFFLEAF_BLOCK, TYNNIA_BLOCK};
@@ -171,7 +177,7 @@ public class RoguelikeHerblore implements ModInitializer {
         // Since I'm not currently writing a world save file, if the effect list is then lengthened, the plant's effect
         // will change in the world (because it no longer had to loop around, so it has a different offset now).
         forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 800, 0));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 300, 2));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.NAUSEA, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.RESISTANCE, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 200, 1));
@@ -187,32 +193,41 @@ public class RoguelikeHerblore implements ModInitializer {
         forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 1));
         forageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 600, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.SLOW_FALLING, 300, 0));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 800, 1));
-        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 200, 3));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 600, 1));
+        forageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 3));
         forageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 1200, 0));
         forageableEffects.add(new StatusEffectGen(StatusEffects.BLINDNESS, 200, 2));
 
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 1200, 2));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.DOLPHINS_GRACE, 600, 0));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 3));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 600, 0));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 600, 2));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 200, 2));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 1800, 0));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 1800, 0));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.WITHER, 160, 1));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 600, 2));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.INSTANT_HEALTH, 1, 1));
-        treatedForageableEffects.add(new StatusEffectGen(StatusEffects.LEVITATION, 200, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.ABSORPTION, 1200, 2));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.DOLPHINS_GRACE, 600, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.HUNGER, 200, 3));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.REGENERATION, 600, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 600, 2));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 200, 2));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.NIGHT_VISION, 1800, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.WATER_BREATHING, 1800, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.WITHER, 160, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 600, 2));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.INSTANT_HEALTH, 1, 2));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.JUMP_BOOST, 200, 3));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.LUCK, 1200, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.SPEED, 900, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.WITHER, 160, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.STRENGTH, 1200, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.STRENGTH, 600, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.POISON, 200, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.HASTE, 600, 1));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.INVISIBILITY, 1200, 0));
+        potentForageableEffects.add(new StatusEffectGen(StatusEffects.WITHER, 160, 1));
 
         ServerWorldEvents.LOAD.register((server, world) -> {
             // It'll also fire off when someone loads the Nether/etc...is  there some way of filtering that?
             // Because of course we also want it to work properly if someone loads a different overworld instance.
             // No idea how those are implemented/if they get a "new" seed (I imagine it'd be derived from the old, but still)
-            setScrambledEffects(forageableEffects, world.getSeed(), 0);
+            effectOffsetRedirect = setScrambledEffects(forageableEffects, world.getSeed(), 0);
             // Offset is used to avoid random seed overlap, so we just need it high enough we'd never reasonably have an effect list
             // of that length
-            setScrambledEffects(treatedForageableEffects, world.getSeed(), 500);
+            potentEffectOffsetRedirect = setScrambledEffects(potentForageableEffects, world.getSeed(), 500);
         });
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "wild_inoculant"), WILD_INOCULANT);
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, "floral_baton"), FLORAL_BATON);
@@ -251,14 +266,26 @@ public class RoguelikeHerblore implements ModInitializer {
         return MIPPED_BLOCKS;
     }
 
-    private static Item generateHarvestFood(String source_plant, int hunger, float saturation) {
-        Item harvest_food =  new ForageableFoodItem(new Item.Settings().group(group).food(new FoodComponent.Builder().hunger(hunger).saturationModifier(saturation).build())).withOffset(offset);
-        ITEMS.put(harvest_food, new Identifier(MOD_ID, source_plant+"_harvest_item"));
-        offset ++;
-        return harvest_food;
+    public static class Harvestables {
+        Item standardItem;
+        Item potentItem;
+
+        public Harvestables(Item standardItem, Item potentItem){
+            this.standardItem = standardItem;
+            this.potentItem = potentItem;
+        }
     }
 
-    private static Item generateHarvestFood(String sourcePlant){ return generateHarvestFood(sourcePlant, defaultHunger, defaultSaturation);}
+    private static Harvestables generateHarvestFood(String source_plant, int hunger, float saturation) {
+        Item harvest_food =  new ForageableFoodItem(new Item.Settings().group(group).food(new FoodComponent.Builder().hunger(hunger).saturationModifier(saturation).build())).withOffset(offset);
+        ITEMS.put(harvest_food, new Identifier(MOD_ID, source_plant+"_harvest_item"));
+        Item potent_harvest_food =  new PotentForageableFoodItem(new Item.Settings().group(group).food(new FoodComponent.Builder().hunger(hunger).saturationModifier(saturation).build())).withOffset(offset);
+        ITEMS.put(potent_harvest_food, new Identifier(MOD_ID, source_plant+"_harvest_item_potent"));
+        offset ++;
+        return new Harvestables(harvest_food, potent_harvest_food);
+    }
+
+    private static Harvestables generateHarvestFood(String sourcePlant){ return generateHarvestFood(sourcePlant, defaultHunger, defaultSaturation);}
 
     private static Block generateHarvestBlock(String sourcePlant, Biome.Category spawnBiome) {
         Block harvest_block = new ForageableBlock(FabricBlockSettings.of(Material.PLANT).noCollision().nonOpaque());
@@ -297,8 +324,8 @@ public class RoguelikeHerblore implements ModInitializer {
         return forageableEffects.get(effectOffsetRedirect[offset]).genEffect();
     }
 
-    public static StatusEffectInstance getTreatedForageableEffect(int offset){
-        return treatedForageableEffects.get(effectOffsetRedirect[offset]).genEffect();
+    public static StatusEffectInstance getPotentForageableEffect(int offset){
+        return potentForageableEffects.get(potentEffectOffsetRedirect[offset]).genEffect();
     }
 
     /* To keep the lengths of the plant and effect lists independent, we "tile"
@@ -308,14 +335,15 @@ public class RoguelikeHerblore implements ModInitializer {
      * times. This should help prevent people from getting worlds with nothing but
      * Nausea plants.
      */
-    private void setScrambledEffects(ArrayList<StatusEffectGen> effectList, long worldSeed, int seedOffset){
+    private int[] setScrambledEffects(ArrayList<StatusEffectGen> effectList, long worldSeed, int seedOffset){
         int repetitions = ceil((float) maxOffset /effectList.size());
-        effectOffsetRedirect = new int[effectList.size()*repetitions];
+        int[] outputArray = new int[effectList.size()*repetitions];
         for(int i = 0; i < repetitions; i++){
             final int[] effectOffsets = IntStream.rangeClosed(0, effectList.size()-1).toArray();
             scrambleEffectsPerSeed(effectOffsets, worldSeed+i+seedOffset);
-            System.arraycopy(effectOffsets, 0, effectOffsetRedirect, i * effectList.size(), effectList.size());
+            System.arraycopy(effectOffsets, 0, outputArray, i * effectList.size(), effectList.size());
         }
+        return outputArray;
     }
 
     private static void scrambleEffectsPerSeed(int[] array, long seed)

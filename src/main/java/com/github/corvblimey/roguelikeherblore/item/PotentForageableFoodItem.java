@@ -7,23 +7,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ForageableFoodItem extends Item {
+public class PotentForageableFoodItem extends ForageableFoodItem {
 
-    protected int offset;  // Used to calculate the potion effect
-
-    public ForageableFoodItem(final Settings settings) {
+    public PotentForageableFoodItem(final Settings settings) {
         super(settings);
     }
 
-    public ForageableFoodItem withOffset(int offset) {
-        this.offset = offset;
-        return this;
+    public boolean hasGlint(ItemStack stack) {
+        return true;
     }
 
     @Override
     public ItemStack finishUsing(final ItemStack stack, final World world, final LivingEntity user) {
         final ItemStack remainingStack = super.finishUsing(stack, world, user);
         user.addStatusEffect(RoguelikeHerblore.getForageableEffect(this.offset));
+        user.addStatusEffect(RoguelikeHerblore.getPotentForageableEffect(this.offset));
         return remainingStack;
     }
 }

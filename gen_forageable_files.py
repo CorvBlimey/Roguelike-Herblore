@@ -52,24 +52,38 @@ def main():
                     "textures": {"layer0": f"{MOD_NAME}:block/{name}"}}
         harvest_item={"parent": "item/generated",
                       "textures": {"layer0": f"{MOD_NAME}:item/{name}_harvest_item"}}
+        potent_harvest_item={"parent": "item/generated",
+                             "textures": {"layer0": f"{MOD_NAME}:item/{name}_harvest_item"}}
         loot_table={"type": "minecraft:block",
                     "pools": [{"rolls": 1.0,
                                "entries": [{"type": "minecraft:item",
                                             "conditions": [{"condition": "minecraft:block_state_property",
-                                            "block": f"{MOD_NAME}:{name}",
-                                            "properties": {"bearing": "true"}}],
-                                            "name": f"{MOD_NAME}:{name}_harvest_item"}]},
+                                                            "block": f"{MOD_NAME}:{name}",
+                                                            "properties": {"bearing": "true"}},
+                                                            {"condition": "minecraft:block_state_property",
+                                                             "block": f"{MOD_NAME}:{name}",
+                                                             "properties": {"fertile": "true"}}],
+                                            "name": f"{MOD_NAME}:{name}_harvest_item"},
+                                            {"type": "minecraft:item",
+                                             "conditions": [{"condition": "minecraft:block_state_property",
+                                                             "block": f"{MOD_NAME}:{name}",
+                                                             "properties": {"bearing": "true"}},
+                                                            {"condition": "minecraft:block_state_property",
+                                                             "block": f"{MOD_NAME}:{name}",
+                                                             "properties": {"fertile": "true"}},
+                                                            {"condition": "minecraft:random_chance","chance": 0.1}],
+                                             "name": f"{MOD_NAME}:{name}_harvest_item_potent"}]},
                               {"rolls": 1.0,
                                "entries": [{"type": "minecraft:item",
                                             "name":  f"{MOD_NAME}:{name}"}]}]}
         for content, dir, target in zip(
-            [blockstate, block, block_harvested, block_item, harvest_item, loot_table],
-            ["blockstates", "block","block", "item", "item", "loot_tables"],
-            [f"{name}.json", f"{name}.json", f"{name}_harvested.json", f"{name}.json", f"{name}_harvest_item.json", f"{name}.json"]):
+            [blockstate, block, block_harvested, block_item, harvest_item, potent_harvest_item, loot_table],
+            ["blockstates", "block","block", "item", "item", "item", "loot_tables"],
+            [f"{name}.json", f"{name}.json", f"{name}_harvested.json", f"{name}.json", f"{name}_harvest_item.json", f"{name}_harvest_item_potent.json", f"{name}.json"]):
             with open(os.path.join(required_dirs[dir], target), "w") as outfile:
                 json.dump(content, outfile)
         print(f"public static final Block {name.upper()}_BLOCK = generateHarvestBlock(\"{name}\");")
-        print(f"public static final Item {name.upper()}_HARVEST_ITEM = generateHarvestFood(\"{name}\");")
+        print(f"public static final Harvestables {name.upper()}_HARVEST_ITEMS = generateHarvestFood(\"{name}\");")
     with open(os.path.join(required_dirs["item_tags"], CRAFTING_TAG+".json"), "w") as item_tags_file:
         item_tags = {"replace": False,
                       "values": [f"{MOD_NAME}:{name}" for name in NAMES]}
@@ -77,7 +91,7 @@ def main():
 
         print("\n\n")
         for name in NAMES:
-            clean_name = name.replace("_", " ").title() 
+            clean_name = name.replace("_", " ").title()
             print(f'"block.{MOD_NAME}.{name}": "{clean_name}",')
             print(f'"block.{MOD_NAME}.{name}_harvested": "Harvested {clean_name}",')
 

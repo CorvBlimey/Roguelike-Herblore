@@ -51,10 +51,10 @@ public class ForageableBlock extends PlantBlock {
             for (ItemStack stack : drops) {
                 if (stack.getItem() instanceof BlockItem) {
                     if ((((BlockItem) stack.getItem()).getBlock() == this)) {
-                        ItemStack seedStack = stack.copy();
+                        ItemStack harvestStack = stack.copy();
                         drops.remove(stack);
-                        seedStack.decrement(1);
-                        drops.add(seedStack);
+                        harvestStack.decrement(1);
+                        drops.add(harvestStack);
                         break;
                     }
                 }
